@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <script src="stocks.js"></script>
+  <head>
+    <meta charset="utf-8">
+    <title>Stock Watcher</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+  </head>
+  <body>
+    <div class="container">
+      <fieldset>
+        <form action="/" method="post">
+          <input name="tickerSymbol" type="text" class="ghost-input" placeholder="Enter a stock symbol" required>
+		  <input name="desiredPrice" type="text" class="ghost-input" placeholder="Enter price" required>
+          <input type="submit" class="ghost-button" value="Get current price">
+        </form>
+      </fieldset>
+    </div>
+  </body>
+</html>
