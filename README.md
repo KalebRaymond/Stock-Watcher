@@ -1,1 +1,3 @@
 # Stock-Watcher
+
+Stock Watcher uses real time stock data to alert users via email when a stock in their portfolio reaches a desired price. Stock data provided by [Alpha Vantage](www.alphavantage.co) and makes use of [mirgj's wrapper](https://github.com/mirgj/alphavantage-wrapper#readme).
