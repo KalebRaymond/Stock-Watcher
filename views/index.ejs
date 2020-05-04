@@ -9,12 +9,39 @@
   <body>
     <div class="container">
       <fieldset>
-        <form action="/" method="post">
-          <input name="tickerSymbol" type="text" class="ghost-input" placeholder="Enter a stock symbol" required>
+        <form action="?name=formAdd" method="post">
+          <input name="addedSymbol" type="text" class="ghost-input" placeholder="Enter a stock symbol" required>
 		  <input name="desiredPrice" type="text" class="ghost-input" placeholder="Enter price" required>
           <input type="submit" class="ghost-button" value="Get current price">
         </form>
       </fieldset>
+	  <fieldset>
+        <form action="?name=formRemove" method="post">
+          <input name="removedSymbol" type="text" class="ghost-input" placeholder="Enter a stock symbol" required>
+          <input type="submit" class="ghost-button" value="Remove from portfolio">
+        </form>
+      </fieldset>
+	  <fieldset>
+		<form action="?name=formImport" method="post">
+          <input type="submit" class="ghost-button" value="Import portfolio">
+		</form>
+		<form action="?name=formExport" method="post">
+          <input type="submit" class="ghost-button" value="Export portfolio">
+		</form>
+	  </fieldset>
     </div>
+	<div class="portfolioDiv"> 
+		<p>Your portfiolo:</p>
+		<fieldset>
+			<% if(locals.portfolio !== null){ %>
+				<p><%= locals.portfolio %></p>
+			<% } %>
+
+			<% if(locals.error !== null){ %>
+				<p><%= locals.error %></p>
+			<% } %>
+		</fieldset>
+		<p class="portfolioList"></p>
+	</div>
   </body>
 </html>
