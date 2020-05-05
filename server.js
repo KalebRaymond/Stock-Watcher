@@ -18,49 +18,53 @@ var transporter = nodeMailer.createTransport({
 });
 
 //Checks current market price of every stock in user's portfolio. When a stock's price is above the desired price, an e-mail with all stocks above desired price will be sent to user
-//This function should probably throw/catch an error because asynchronicity makes funny things happen
+var curPortfolio = {};
 var curOpenPrices = {};
+var dailyStockAlertFlags = {};
 async function notify()
 {
 	curOpenPrices = {};
 	var emailFlag = 0;
 	var emailSubject = '';
-	var emailBody = 'Automated response.\n';
-	var openPrice;
+	var emailBody = 'Automated response. ';
+	var openPrice = 0;
 	
 	for(var s in curPortfolio)
 	{
-		await alpha.data.intraday(s).then(data => 
+		//Only check stocks that haven't already been in an e-mail in the last hour (or since last e-mail refresh)
+		if(dailyStockAlertFlags[s] === undefined)
 		{
-			var openPrice = Number(get_open(data));
-			curOpenPrices[s] = openPrice;
-		});
+			await alpha.data.intraday(s).then(data => 
+			{
+				var openPrice = Number(get_open(data));
+				curOpenPrices[s] = openPrice;
+			});
+		}
 	}
 	
 	for(var s in curOpenPrices)
 	{
-		console.log('open ' + s + " " + curOpenPrices[s] + " " + curPortfolio[s]);
+		//console.log('open ' + s + " " + curOpenPrices[s] + " " + curPortfolio[s]);
 		if(curOpenPrices[s] > curPortfolio[s])
 		{
 			var emailFlag = 1;
-			var emailSubject = emailBody + s + ', ';
-			var emailBody = emailBody + s + ' ' + openPrice + '\n';
+			var emailSubject = emailSubject + s + ', ';
+			var emailBody = "<br>" + emailBody + s + ' is now at $' + curOpenPrices[s] + '! ';
+			dailyStockAlertFlags[s] = 1;
 		}
-		else { emailFlag = 3;} //debugging...
 	}
 	
-	console.log(emailFlag);
-	 //Make this a function?
+	//console.log(emailFlag);
 	if(emailFlag)
 	{
-		console.log('Made it to email block');
 		emailSubject = emailSubject.substring(0, emailSubject.length - 2) + ' alert!'
 		
-		/*var mailOptions = {
+		var mailOptions = {
 			from: 'StockWatcherNotification@gmail',
 			to: 'k.raymond.form@gmail.com',
 			subject: emailSubject,
-			text: emailBody,
+			text: '',
+			html: emailBody
 		};
 
 		transporter.sendMail(mailOptions, function(error, info){
@@ -69,33 +73,21 @@ async function notify()
 			} else {
 				console.log('Email sent: ' + info.response);
 			}
-		});*/
+		});
 	}
-	
-	console.log('----');
-}
-
-setInterval(notify, 1 * 60 * 1000);
-
-/* Portfolio.JSON parsing */
-var curPortfolio = {}; //stringify this and put it in json when program finishes/user exports portfolio/whatever
-
-function initialize_portfolio() //CAREFUL This function is asynchronous
-{
-	fs.readFile('portfolio.json', function(err, data) 
+	else
 	{
-		if(err)
-		{
-			console.log('Error opening file. Continuing without initial portfolio.');
-		}
-		else
-		{
-			console.log('portfolio.json successfully opened.');
-			curPorfolio = JSON.parse(data);
-			//console.log(data + ' ' + curPorfolio['MSFT']);
-		}
-	})
+		console.log("No new stock price alerts.")
+	}
 }
+
+function clear_alert_flags()
+{
+	dailyStockAlertFlags = {};
+}
+
+setInterval(notify, 5 * 60 * 1000);
+setInterval(clear_alert_flags, 60 * 60 * 1000);
 
 /* Localhost interactivity */
 app.use(express.static('public'));
@@ -104,7 +96,8 @@ app.set('view engine', 'ejs')
 
 app.get('/', function (req, res)
 {
-	res.render('index');
+	render_portfolio(res);
+	//res.render('index');
 })
 
 function get_open(stockData)
@@ -154,35 +147,47 @@ app.post('/',
 			var flDesiredPrice = parseFloat(req.body.desiredPrice);
 			var openPrice;
 
-			alpha.data.intraday(symbol).then(data => 
+			if(isNaN(flDesiredPrice))
 			{
-				var openPrice = get_open(data);
-				console.log(symbol + ' Open: ' + openPrice + ' Input: ' + flDesiredPrice);
-
-				add_to_portfolio(symbol, flDesiredPrice);
+				console.log('Error: input price is not a number. Addition to portfolio failed.');
 				render_portfolio(res);
-
-				//Send e-mail if current open price is greater than desired price
-				if(openPrice > flDesiredPrice)
+			}
+			else
+			{
+				alpha.data.intraday(symbol).then(data => 
 				{
-					var mailOptions = 
-					{
-						from: 'StockWatcherNotification@gmail',
-						to: 'k.raymond.form@gmail.com',
-						subject: '' + symbol + ' alert!' ,
-						text: 'The current price for ' + symbol + ' is $' + openPrice,
-					};
+					var openPrice = get_open(data);
+					console.log(symbol + ' Open: ' + openPrice + ' Input: ' + flDesiredPrice);
 
-					transporter.sendMail(mailOptions, function(error, info)
+					add_to_portfolio(symbol, flDesiredPrice);
+					render_portfolio(res);
+
+					//Send e-mail if current open price is greater than desired price
+					/*if(openPrice > flDesiredPrice)
 					{
-						if (error) {
-							console.log(error);
-						} else {
-							console.log('Email sent: ' + info.response);
-						}
-					});
-				}
-			});
+						var mailOptions = 
+						{
+							from: 'StockWatcherNotification@gmail',
+							to: 'k.raymond.form@gmail.com',
+							subject: '' + symbol + ' alert!' ,
+							text: 'The current price for ' + symbol + ' is $' + openPrice,
+						};
+
+						transporter.sendMail(mailOptions, function(error, info)
+						{
+							if (error) {
+								console.log(error);
+							} else {
+								console.log('Email sent: ' + info.response);
+							}
+						});
+					}*/
+				}).catch(function(err)
+				{
+					console.log('Alpha Vantage error: stock ' + symbol + ' not found.');
+					render_portfolio(res);
+				});
+			}
 		} 
 		else
 		{
@@ -204,20 +209,6 @@ app.post('/',
 			next();
 		}
 	},
-	/* Function for importing portfolio from json file, accessed via root path with query ?name=formImport */
-	function(req, res, next)
-	{
-		if (req.query.name === 'formImport')
-		{
-			initialize_portfolio();
-			render_portfolio(res);
-			console.log(curPortfolio + ' ' + curPortfolio['MSFT']);
-		}
-		else
-		{
-			next();
-		}
-	},
 	/* Function for exporting portfolio as json file, accessed via root path with query ?name=formExport */
 	function()
 	{
@@ -225,7 +216,19 @@ app.post('/',
 		fs.writeFile('portfolio.json', portfolioJSON, function (err){if (err) throw err;} );
 	})
 
-app.listen(8080, function (res) 
+app.listen(8080, function (req) 
 {
 	console.log('Example app listening on port 8080!')
+	fs.readFile('portfolio.json', function(err, data) 
+	{
+		if(err)
+		{
+			console.log('Error opening file. Continuing without initial portfolio.');
+		}
+		else
+		{
+			console.log('portfolio.json successfully opened.');
+			curPortfolio = JSON.parse(data); 
+		}
+	});
 })
