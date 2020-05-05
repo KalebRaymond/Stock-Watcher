@@ -5,3 +5,4 @@ Stock Watcher uses real time stock data to alert users via e-mail when a stock i
 Todo:  
   Import doesn't work (furthermore it shouldn't even be a button, the portfolio should import itself automatically)  
   Error handling & corner cases  
+  Email body html doesn't display line breaks
