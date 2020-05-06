@@ -5,6 +5,7 @@ const express = require('express');
 const alpha = require('alphavantage')({ key: '****' });
 const nodeMailer = require('nodeMailer'); 
 const fs = require('fs'); 
+const parser = require('node-html-parser').parse;
 const app = express();
 
 /* Email */
@@ -96,8 +97,7 @@ app.set('view engine', 'ejs')
 
 app.get('/', function (req, res)
 {
-	render_portfolio(res);
-	//res.render('index');
+	render_portfolio(req, res);
 })
 
 function get_open(stockData)
@@ -127,14 +127,22 @@ function remove_from_portfolio(stock)
 	delete curPortfolio[stock];
 }
 
-function render_portfolio(res)
+function render_portfolio(req, res)
 {
-	var portfolioText = ''
+	var html = fs.readFileSync('views/index.ejs');
+	const root = parser(html);
+	const body = root.querySelector('table');
+	
+	var portfolioText = '';
 	for(var s in curPortfolio)
 	{
-		portfolioText += s + '\t$' + curPortfolio[s] + '\n';
+		portfolioText += '\n\t\t\t<tr class="stock" id="' + s + '"><td>' + s + '</td><td>Open: ' + '</td><td>Watching for: $' + curPortfolio[s] + '</td><td class="deleteButton">DELETE</td></tr>';
 	}
-	res.render('index', {portfolio: portfolioText, error: null});
+	portfolioText += '\n\t\t';
+	
+	body.set_content(portfolioText);
+	fs.writeFileSync('views/index.ejs', root.toString());
+	res.render('index', {});
 }
 
 app.post('/', 
@@ -150,7 +158,7 @@ app.post('/',
 			if(isNaN(flDesiredPrice))
 			{
 				console.log('Error: input price is not a number. Addition to portfolio failed.');
-				render_portfolio(res);
+				render_portfolio(req, res);
 			}
 			else
 			{
@@ -160,7 +168,7 @@ app.post('/',
 					console.log(symbol + ' Open: ' + openPrice + ' Input: ' + flDesiredPrice);
 
 					add_to_portfolio(symbol, flDesiredPrice);
-					render_portfolio(res);
+					render_portfolio(req, res);
 
 					//Send e-mail if current open price is greater than desired price
 					/*if(openPrice > flDesiredPrice)
@@ -185,7 +193,7 @@ app.post('/',
 				}).catch(function(err)
 				{
 					console.log('Alpha Vantage error: stock ' + symbol + ' not found.');
-					render_portfolio(res);
+					render_portfolio(req, res);
 				});
 			}
 		} 
@@ -202,7 +210,7 @@ app.post('/',
 			//console.log('Attempting to remove ' + req.body.removedSymbol.toUpperCase() + ' from portfolio');
 			//console.log('Arrived at second function');
 			remove_from_portfolio(req.body.removedSymbol.toUpperCase());
-			render_portfolio(res);
+			render_portfolio(req, res);
 		}
 		else
 		{
