@@ -1,0 +1,121 @@
+body 
+{
+	background-color: #1f0317;
+	font-family: bahnschrift,sans-serif;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #bff2ce;
+}
+
+fieldset
+{
+	border: 3px solid #bff2ce;
+	border-radius: 7px;
+}
+
+fieldset.io
+{
+	width: 100px;
+	height: 100px;
+	vertical-align: top;
+	display: inline-block;
+	position: relative;
+	z-index: 0;
+}
+
+div.ioContainer div
+{
+	display: inline-block;
+}
+
+div.ioDiv p
+{
+	background-color: #1f0317;
+	text-align: center;
+	margin-bottom: -9px;
+	margin-top: 1px;
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	z-index: 1;
+}
+
+p#add
+{
+	width: 36px;
+}
+
+p#remove
+{
+	width: 60px;
+}
+
+p#export
+{
+	width: 52px;
+}
+
+input.inputBox
+{
+	border: none;
+	border-bottom: 2px solid #bff2ce;
+	font-family: bahnschrift,sans-serif;
+	font-weight: bold;
+	background-color: #1f0317;
+	color: #bff2ce;
+	margin-top: 7px;
+}
+
+input.button
+{
+	border: none;
+	border-radius: 5px;
+	background-color: #bff2ce;
+	color: #1f0317;
+	font-family: bahnschrift,sans-serif;
+	font-weight: bold;
+	margin-top: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	height: 30px;
+}
+
+table
+{
+	background-color: #2b1123;
+	border: 3px solid #bff2ce;
+	border-radius: 7px;
+	min-width: 526px;
+	padding: 10px;
+}
+
+td
+{
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+td.deleteButton
+{
+	visibility: hidden;
+	color: #1f0317;
+}
+
+tr:hover
+{
+	background-color: #880015;
+	border-radius: 3px;
+}
+
+tr:hover > td.deleteButton
+{
+	visibility: visible;
+	color: red;
+}
+
+td.deleteButton:hover
+{
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+}
