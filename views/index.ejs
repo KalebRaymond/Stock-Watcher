@@ -7,38 +7,42 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
   </head>
   <body>
-    <div class="container">
-      <fieldset>
-        <form action="?name=formAdd" method="post">
-          <input name="addedSymbol" type="text" class="ghost-input" placeholder="Enter a stock symbol" required>
-		  <input name="desiredPrice" type="text" class="ghost-input" placeholder="Enter desired price" required>
-          <input type="submit" class="ghost-button" value="Get current price">
-        </form>
-      </fieldset>
-	  <fieldset>
-        <form action="?name=formRemove" method="post">
-          <input name="removedSymbol" type="text" class="ghost-input" placeholder="Enter a stock symbol" required>
-          <input type="submit" class="ghost-button" value="Remove from portfolio">
-        </form>
-      </fieldset>
-	  <fieldset>
-		<form action="?name=formExport" method="post">
-          <input type="submit" class="ghost-button" value="Export portfolio">
-		</form>
-	  </fieldset>
+    <div class="ioContainer">
+		<div class="ioDiv">
+		  <p id="add">Add</p>
+		  <fieldset class="io">
+			<form action="?name=formAdd" method="post">
+			  <input name="addedSymbol" type="text" class="inputBox" placeholder="Symbol" required>
+			  <input name="desiredPrice" type="text" class="inputBox" placeholder="Price" required>
+			  <input type="submit" class="button" value="Add">
+			</form>
+		  </fieldset>
+		</div>
+		<div class="ioDiv">
+		  <p id="remove">Remove</p>  
+		  <fieldset class="io">
+			<form action="?name=formRemove" method="post">
+			  <input name="removedSymbol" type="text" class="inputBox" placeholder="Symbol" required>
+			  <input type="submit" class="button" value="Remove">
+			</form>
+		  </fieldset>
+		</div>
+		<div class="ioDiv">
+		  <p id="export">Export</p>
+		  <fieldset class="io">
+			<form action="?name=formExport" method="post">
+			  <input type="submit" class="button" value="Export">
+			</form>
+		  </fieldset>
+		</div>
     </div>
 	<div class="portfolioDiv"> 
-		<p>Your portfiolo:</p>
-		<fieldset>
-			<% if(locals.portfolio !== null){ %>
-				<p><%= locals.portfolio %></p>
-			<% } %>
-
-			<% if(locals.error !== null){ %>
-				<p><%= locals.error %></p>
-			<% } %>
-		</fieldset>
-		<p class="portfolioList"></p>
+		<p>Your portfolio:</p>
+		<table class="portfolioTable" cellspacing="0" cellpadding="0">
+			<tr class="stock" id="TSLA"><td>TSLA</td><td>Open: </td><td>Watching for: $9999</td><td class="deleteButton">DELETE</td></tr>
+			<tr class="stock" id="MSFT"><td>MSFT</td><td>Open: </td><td>Watching for: $9999</td><td class="deleteButton">DELETE</td></tr>
+			<tr class="stock" id="AAPL"><td>AAPL</td><td>Open: </td><td>Watching for: $9999</td><td class="deleteButton">DELETE</td></tr>
+		</table>
 	</div>
   </body>
 </html>
