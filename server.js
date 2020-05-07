@@ -97,6 +97,7 @@ app.set('view engine', 'ejs')
 
 app.get('/', function (req, res)
 {
+	notify(); //Retrieving stock data is slow, if you await notify the page wont load for a few seconds
 	render_portfolio(req, res);
 })
 
@@ -117,30 +118,35 @@ function get_open(stockData)
 	}
 }
 
-function add_to_portfolio(stock, price)
+function add_to_portfolio(stock, desiredPrice, curOpen)
 {
-	curPortfolio[stock] = price;
+	curPortfolio[stock] = desiredPrice;
+	curOpenPrices[stock] = curOpen;
 }
 
 function remove_from_portfolio(stock)
 {
 	delete curPortfolio[stock];
+	delete curOpenPrices[stock]
 }
 
 function render_portfolio(req, res)
 {
 	var html = fs.readFileSync('views/index.ejs');
-	const root = parser(html);
+	const root = parser(html, {script: true});
 	const body = root.querySelector('table');
 	
 	var portfolioText = '';
 	for(var s in curPortfolio)
 	{
-		portfolioText += '\n\t\t\t<tr class="stock" id="' + s + '"><td>' + s + '</td><td>Open: ' + '</td><td>Watching for: $' + curPortfolio[s] + '</td><td class="deleteButton">DELETE</td></tr>';
+		var openPrice = '$' + curOpenPrices[s];
+		if(curOpenPrices[s] == undefined) openPrice = "Awaiting data...";
+		
+		portfolioText += '\n\t\t\t\t<tr class="stock" id="' + s + '"><td>' + s + '</td><td>Open: ' + openPrice + '</td><td>Watching for: $' + curPortfolio[s] + '</td><td><button form="removeForm" class="deleteButton" type="submit" onclick="sendSymbol(\'' + s + '\')">DELETE</button></td></tr>';
 	}
-	portfolioText += '\n\t\t';
-	
+	portfolioText += '\n\t\t\t';
 	body.set_content(portfolioText);
+	
 	fs.writeFileSync('views/index.ejs', root.toString());
 	res.render('index', {});
 }
@@ -167,7 +173,7 @@ app.post('/',
 					var openPrice = get_open(data);
 					console.log(symbol + ' Open: ' + openPrice + ' Input: ' + flDesiredPrice);
 
-					add_to_portfolio(symbol, flDesiredPrice);
+					add_to_portfolio(symbol, flDesiredPrice, openPrice);
 					render_portfolio(req, res);
 
 					//Send e-mail if current open price is greater than desired price
@@ -209,6 +215,7 @@ app.post('/',
 		{
 			//console.log('Attempting to remove ' + req.body.removedSymbol.toUpperCase() + ' from portfolio');
 			//console.log('Arrived at second function');
+			console.log(req.body);
 			remove_from_portfolio(req.body.removedSymbol.toUpperCase());
 			render_portfolio(req, res);
 		}
@@ -218,10 +225,17 @@ app.post('/',
 		}
 	},
 	/* Function for exporting portfolio as json file, accessed via root path with query ?name=formExport */
-	function()
+	function(req, res, next)
 	{
-		var portfolioJSON = JSON.stringify(curPortfolio);
-		fs.writeFile('portfolio.json', portfolioJSON, function (err){if (err) throw err;} );
+		if (req.query.name === 'formExport')
+		{
+			var portfolioJSON = JSON.stringify(curPortfolio);
+			fs.writeFile('portfolio.json', portfolioJSON, function (err){if (err) throw err;} );
+		}
+		else
+		{
+			next();
+		}
 	})
 
 app.listen(8080, function (req) 
