@@ -7,14 +7,10 @@ body
 	color: #bff2ce;
 }
 
-fieldset
+fieldset.io
 {
 	border: 3px solid #bff2ce;
 	border-radius: 7px;
-}
-
-fieldset.io
-{
 	width: 100px;
 	height: 100px;
 	vertical-align: top;
@@ -55,6 +51,12 @@ p#export
 	width: 52px;
 }
 
+fieldset.portfolio
+{
+	border:none;
+	margin-left: -5px;
+}
+
 input.inputBox
 {
 	border: none;
@@ -81,12 +83,18 @@ input.button
 	height: 30px;
 }
 
+input.button:hover
+{
+	cursor: pointer;
+}
+
 table
 {
 	background-color: #2b1123;
 	border: 3px solid #bff2ce;
 	border-radius: 7px;
-	min-width: 526px;
+	width: 525px;
+	margin-left: -3px;
 	padding: 10px;
 }
 
@@ -96,11 +104,6 @@ td
 	padding-bottom: 2px;
 }
 
-td.deleteButton
-{
-	visibility: hidden;
-	color: #1f0317;
-}
 
 tr:hover
 {
@@ -108,14 +111,27 @@ tr:hover
 	border-radius: 3px;
 }
 
-tr:hover > td.deleteButton
+
+td > button.deleteButton
+{
+	visibility: hidden;
+	color: #1f0317;
+}
+
+
+tr:hover > td > button.deleteButton
 {
 	visibility: visible;
 	color: red;
+	border: none;
+	background-color: #880015;
+	font-family: bahnschrift,sans-serif;
+	font-weight: bold;
 }
 
-td.deleteButton:hover
+button.deleteButton:hover
 {
+	cursor: pointer;
 	text-decoration: underline;
 	text-decoration-thickness: 2px;
 }
