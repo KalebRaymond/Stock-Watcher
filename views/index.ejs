@@ -36,13 +36,18 @@
 		  </fieldset>
 		</div>
     </div>
-	<div class="portfolioDiv"> 
+	<fieldset class="portfolio"> 
 		<p>Your portfolio:</p>
-		<table class="portfolioTable" cellspacing="0" cellpadding="0">
-			<tr class="stock" id="TSLA"><td>TSLA</td><td>Open: </td><td>Watching for: $9999</td><td class="deleteButton">DELETE</td></tr>
-			<tr class="stock" id="MSFT"><td>MSFT</td><td>Open: </td><td>Watching for: $9999</td><td class="deleteButton">DELETE</td></tr>
-			<tr class="stock" id="AAPL"><td>AAPL</td><td>Open: </td><td>Watching for: $9999</td><td class="deleteButton">DELETE</td></tr>
-		</table>
-	</div>
+		<form action="?name=formRemove" method="post" id="removeForm">
+			<input id="removeText" type="text" name="removedSymbol" style="display:none">
+			<table class="portfolioTable" cellspacing="0" cellpadding="0">
+				<tr class="stock" id="TSLA"><td>TSLA</td><td>Open: $782.59</td><td>Watching for: $9999</td><td><button form="removeForm" class="deleteButton" type="submit" onclick="sendSymbol('TSLA')">DELETE</button></td></tr>
+				<tr class="stock" id="MSFT"><td>MSFT</td><td>Open: $182.66</td><td>Watching for: $9999</td><td><button form="removeForm" class="deleteButton" type="submit" onclick="sendSymbol('MSFT')">DELETE</button></td></tr>
+				<tr class="stock" id="AAPL"><td>AAPL</td><td>Open: $300.8400</td><td>Watching for: $1</td><td><button form="removeForm" class="deleteButton" type="submit" onclick="sendSymbol('AAPL')">DELETE</button></td></tr>
+				<tr class="stock" id="F"><td>F</td><td>Open: $4.9072</td><td>Watching for: $9999.99</td><td><button form="removeForm" class="deleteButton" type="submit" onclick="sendSymbol('F')">DELETE</button></td></tr>
+			</table>
+		</form>
+		<script>function sendSymbol(s){ document.getElementById("removeText").value = s;}</script>
+	</fieldset>
   </body>
 </html>
