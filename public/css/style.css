@@ -11,7 +11,7 @@ fieldset.io
 {
 	border: 3px solid #bff2ce;
 	border-radius: 7px;
-	width: 100px;
+	width: 150px;
 	height: 100px;
 	vertical-align: top;
 	display: inline-block;
@@ -55,6 +55,13 @@ fieldset.portfolio
 {
 	border:none;
 	margin-left: -5px;
+	font-size: 14px;
+}
+
+fieldset.portfolio > p
+{
+	margin-bottom: 2px;
+	
 }
 
 input.inputBox
@@ -62,6 +69,7 @@ input.inputBox
 	border: none;
 	border-bottom: 2px solid #bff2ce;
 	font-family: bahnschrift,sans-serif;
+	font-size: 14px;
 	font-weight: bold;
 	background-color: #1f0317;
 	color: #bff2ce;
@@ -75,6 +83,7 @@ input.button
 	background-color: #bff2ce;
 	color: #1f0317;
 	font-family: bahnschrift,sans-serif;
+	font-size: 14px;
 	font-weight: bold;
 	margin-top: 10px;
 	margin-left: auto;
@@ -93,7 +102,7 @@ table
 	background-color: #2b1123;
 	border: 3px solid #bff2ce;
 	border-radius: 7px;
-	width: 525px;
+	width: 591px;
 	margin-left: -3px;
 	padding: 10px;
 }
@@ -127,6 +136,8 @@ tr:hover > td > button.deleteButton
 	background-color: #880015;
 	font-family: bahnschrift,sans-serif;
 	font-weight: bold;
+	padding-top: 2px;
+	padding-bottom: 3px;
 }
 
 button.deleteButton:hover
