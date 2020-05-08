@@ -142,7 +142,7 @@ function render_portfolio(req, res)
 		var openPrice = '$' + curOpenPrices[s];
 		if(curOpenPrices[s] == undefined) openPrice = "Awaiting data...";
 		
-		portfolioText += '\n\t\t\t\t<tr class="stock" id="' + s + '"><td>' + s + '</td><td>Open: ' + openPrice + '</td><td>Watching for: $' + curPortfolio[s] + '</td><td><button form="removeForm" class="deleteButton" type="submit" onclick="sendSymbol(\'' + s + '\')">DELETE</button></td></tr>';
+		portfolioText += '\n\t\t\t\t<tr class="stock" id="' + s + '"><td>' + s + '</td><td>Last price: ' + openPrice + '</td><td>Watching for: $' + curPortfolio[s] + '</td><td><button form="removeForm" class="deleteButton" type="submit" onclick="sendSymbol(\'' + s + '\')">DELETE</button></td></tr>';
 	}
 	portfolioText += '\n\t\t\t';
 	body.set_content(portfolioText);
@@ -170,9 +170,8 @@ app.post('/',
 			{
 				alpha.data.intraday(symbol).then(data => 
 				{
+					console.log(data);
 					var openPrice = get_open(data);
-					console.log(symbol + ' Open: ' + openPrice + ' Input: ' + flDesiredPrice);
-
 					add_to_portfolio(symbol, flDesiredPrice, openPrice);
 					render_portfolio(req, res);
 
