@@ -1,51 +1,151 @@
 <!DOCTYPE html>
 <html>
-  <script src="stocks.js"></script>
-  <head>
-    <meta charset="utf-8">
-    <title>Stock Watcher</title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
-  </head>
-  <body>
-    <div class="ioContainer">
-		<div class="ioDiv">
-		  <p id="add">Add</p>
-		  <fieldset class="io">
-			<form action="?name=formAdd" method="post">
-			  <input name="addedSymbol" type="text" class="inputBox" placeholder="Symbol" required>
-			  <input name="desiredPrice" type="text" class="inputBox" placeholder="Price" required>
-			  <input type="submit" class="button" value="Add">
-			</form>
-		  </fieldset>
-		</div>
-		<div class="ioDiv">
-		  <p id="remove">Remove</p>  
-		  <fieldset class="io">
-			<form action="?name=formRemove" method="post">
-			  <input name="removedSymbol" type="text" class="inputBox" placeholder="Symbol" required>
-			  <input type="submit" class="button" value="Remove">
-			</form>
-		  </fieldset>
-		</div>
-		<div class="ioDiv">
-		  <p id="export">Export</p>
-		  <fieldset class="io">
-			<form action="?name=formExport" method="post">
-			  <input type="submit" class="button" value="Export">
-			</form>
-		  </fieldset>
-		</div>
-    </div>
-	<fieldset class="portfolio"> 
-		<p>Your portfolio:</p>
-		<form action="?name=formRemove" method="post" id="removeForm">
-			<input id="removeText" type="text" name="removedSymbol" style="display:none">
-			<table class="portfolioTable" cellspacing="0" cellpadding="0">
-				<tr class="stock" id="IBM"><td>IBM</td><td>Last price: $121.8310</td><td>Watching for: $9999</td><td><button form="removeForm" class="deleteButton" type="submit" onclick="sendSymbol('IBM')">DELETE</button></td></tr>
-				<tr class="stock" id="TSLA"><td>TSLA</td><td>Last price: $780.0000</td><td>Watching for: $9999</td><td><button form="removeForm" class="deleteButton" type="submit" onclick="sendSymbol('TSLA')">DELETE</button></td></tr>
+	<script src="stocks.js"></script>
+	<head>
+		<meta charset="utf-8">
+		<title>Stock Watcher</title>
+		<link rel="stylesheet" type="text/css" href="/css/style.css">
+	</head>
+	<div>
+		<div class="colummn">
+			<div class="ioContainer">
+				<div class="ioDiv">
+				  <p id="add">Add</p>
+				  <fieldset class="io">
+					<form action="?name=formAdd" method="post">
+					  <input name="addedSymbol" type="text" class="inputBox" placeholder="Symbol" required>
+					  <input name="desiredPrice" type="text" class="inputBox" placeholder="Price" required>
+					  <input type="submit" class="button" value="Add">
+					</form>
+				  </fieldset>
+				</div>
+				<div class="ioDiv">
+				  <p id="remove">Remove</p>  
+				  <fieldset class="io">
+					<form action="?name=formRemove" method="post">
+					  <input name="removedSymbol" type="text" class="inputBox" placeholder="Symbol" required>
+					  <input type="submit" class="button" value="Remove">
+					</form>
+				  </fieldset>
+				</div>
+				<div class="ioDiv">
+				  <p id="export">Export</p>
+				  <fieldset class="io">
+					<form action="?name=formExport" method="post">
+					  <input type="submit" class="button" value="Export">
+					</form>
+				  </fieldset>
+				</div>
+			</div>
+			<fieldset class="portfolio"> 
+				<p>Your portfolio:</p>
+				<form action="?name=formRemove" method="post" id="removeForm">
+					<input id="removeText" type="text" name="removedSymbol" style="display:none">
+					<table class="portfolioTable" cellspacing="0" cellpadding="0">
+				<tr class="stock" id="TSLA"><td>TSLA</td><td>Last price: $819.01</td><td>Watching for: $9999</td><td><button form="removeForm" class="deleteButton" type="submit" onclick="sendSymbol('TSLA')">DELETE</button></td></tr>
+				<tr class="stock" id="AAPL"><td>AAPL</td><td>Last price: $309.97</td><td>Watching for: $9999</td><td><button form="removeForm" class="deleteButton" type="submit" onclick="sendSymbol('AAPL')">DELETE</button></td></tr>
+				<tr class="stock" id="HD"><td>HD</td><td>Last price: $234.2200</td><td>Watching for: $9999</td><td><button form="removeForm" class="deleteButton" type="submit" onclick="sendSymbol('HD')">DELETE</button></td></tr>
 			</table>
-		</form>
-		<script>function sendSymbol(s){ document.getElementById("removeText").value = s;}</script>
-	</fieldset>
-  </body>
+				</form>
+				<script>function sendSymbol(s){ document.getElementById("removeText").value = s;}</script>
+			</fieldset>
+		</div>
+		<div class="column">
+			<div class="canvasDiv">
+				<canvas id="canvas" width="400" height="400">
+				</canvas>
+			</div>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+			<script>
+				//put all of this in a file?
+				var canvas = document.getElementById('canvas');
+				var ctx = canvas.getContext('2d');
+
+				var prices = [122.9800, 122.9300, 122.9100 ,122.9900, 122.9500]; //automate this
+				var times = ["15:56", "15:57", "15:58", "15.59", "16:00"]; //automate this too
+				
+				//Tricky part is calculating what value to add/subtract and calculating yStep... Want the line close to the top
+				var yMin = Math.min.apply(null, prices) - 0.2;
+				var yMax = Math.max.apply(null, prices) + 0.1;
+				var yStep = 0.08;
+				
+				var myChart = new Chart(ctx, {
+				   type: 'line',
+				   data:
+				   {
+					  labels: times,
+					  datasets: [
+					  {
+						display: false,
+						label: 'IBM',
+						data: prices,
+						borderColor: '#bff2ce',
+						pointBackgroundColor: '#bff2ce',
+						fill: false
+					  }]
+				   },
+				   options: 
+				   {
+						responsive: false,
+						
+						legend:
+						{
+							display: false
+						},
+						
+						title:
+						{
+							display: true,
+							text: 'IBM',
+							fontColor: '#bff2ce',
+							fontFamily: 'bahnschrift',
+							fontSize: 16
+						},
+						
+						scales:
+						{
+							xAxes: [
+							{
+								gridLines: 
+								{
+									display: false,
+									color: '#bff2ce'
+								},
+								
+								ticks:
+								{
+									fontColor: '#bff2ce',
+									fontFamily: 'bahnschrift'
+								}
+							}],
+								
+							yAxes: [
+							{
+								gridLines: 
+								{
+									display: false,
+									color: '#bff2ce'
+								},
+								
+								ticks:
+								{
+									min: yMin,
+									max: yMax,
+									stepSize: yStep,
+									fontColor: '#bff2ce',
+									fontFamily: 'bahnschrift'
+								},
+								
+								afterTickToLabelConversion: function(scaleInstance)
+								{
+									scaleInstance.ticks[scaleInstance.ticks.length - 1] = null;
+									//scaleInstance.ticksAsNumbers[scaleInstance.ticksAsNumbers.length - 1] = null;
+								}
+							}]
+						}
+				   }
+				});
+			</script>
+		</div>
+	</div>
 </html>
