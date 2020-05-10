@@ -87,8 +87,8 @@ function clear_alert_flags()
 	dailyStockAlertFlags = {};
 }
 
-setInterval(notify, 5 * 60 * 1000);
-setInterval(clear_alert_flags, 60 * 60 * 1000);
+//setInterval(notify, 5 * 60 * 1000);
+//setInterval(clear_alert_flags, 60 * 60 * 1000);
 
 /* Localhost interactivity */
 app.use(express.static('public'));
