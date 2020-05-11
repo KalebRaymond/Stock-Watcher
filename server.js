@@ -1,5 +1,3 @@
-//import bodyParser from 'body-parser';
-//import express from 'express'; 
 const bodyParser = require('body-parser');
 const express = require('express');
 const alpha = require('alphavantage')({ key: '****' });
@@ -107,11 +105,11 @@ function get_open(stockData)
     var objectValue = JSON.parse(dataString);
 	
 	/* Access most recent open price from JSON data */
-	for (var i in objectValue['Time Series (1min)'])
+	for (var i in objectValue['Time Series (5min)'])
 	{
-		for(var j in objectValue['Time Series (1min)'][i])
+		for(var j in objectValue['Time Series (5min)'][i])
 		{
-			return objectValue['Time Series (1min)'][i][j]; //Most recent price ('open price')
+			return objectValue['Time Series (5min)'][i][j]; //Most recent price ('open price') (should actually be 'closed price'...)
 			//break;
 		}
 		//break;
@@ -142,9 +140,9 @@ function render_portfolio(req, res)
 		var openPrice = '$' + curOpenPrices[s];
 		if(curOpenPrices[s] == undefined) openPrice = "Awaiting data...";
 		
-		portfolioText += '\n\t\t\t\t<tr class="stock" id="' + s + '"><td>' + s + '</td><td>Last price: ' + openPrice + '</td><td>Watching for: $' + curPortfolio[s] + '</td><td><button form="removeForm" class="deleteButton" type="submit" onclick="sendSymbol(\'' + s + '\')">DELETE</button></td></tr>';
+		portfolioText += '\n\t\t\t\t\t\t<tr class="stock" id="' + s + '" onmouseover="printSymbol(\'' + s + '\')"><td>' + s + '</td><td>Last price: ' + openPrice + '</td><td>Watching for: $' + curPortfolio[s] + '</td><td><button form="tableForm" class="deleteButton" type="submit" onclick="sendSymbol(\'' + s + '\')">DELETE</button></td></tr>';
 	}
-	portfolioText += '\n\t\t\t';
+	portfolioText += '\n\t\t\t\t\t';
 	body.set_content(portfolioText);
 	
 	fs.writeFileSync('views/index.ejs', root.toString());
@@ -154,7 +152,7 @@ function render_portfolio(req, res)
 app.post('/', 
 	/* Function for adding stock to portfolio, accessed via root path with query ?name=formRemove  */
 	function (req, res, next)
-	{
+	{	
 		if (req.query.name === 'formAdd')
 		{
 			var symbol = req.body.addedSymbol.toUpperCase();
@@ -168,9 +166,10 @@ app.post('/',
 			}
 			else
 			{
-				alpha.data.intraday(symbol).then(data => 
+				alpha.data.intraday(symbol, 'compact', 'json', '5min').then(data => 
 				{
-					console.log(data);
+					fs.writeFileSync('time_series_data.json', JSON.stringify(data)); //Make this async?
+					
 					var openPrice = get_open(data);
 					add_to_portfolio(symbol, flDesiredPrice, openPrice);
 					render_portfolio(req, res);
@@ -235,7 +234,19 @@ app.post('/',
 		{
 			next();
 		}
-	})
+	},
+	/* Function for rendering line chart for a stock, accessed via root path with query ?name=graph */
+	function(req, res, next)
+	{
+		if( req.query.name === 'graph')
+		{
+			console.log(req.body.removedSymbol); //Should change the name of removedSymbol in html...
+		}
+		else
+		{
+			next();
+		}
+	});
 
 app.listen(8080, function (req) 
 {
