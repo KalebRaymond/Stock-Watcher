@@ -39,15 +39,25 @@
 			</div>
 			<fieldset class="portfolio"> 
 				<p>Your portfolio:</p>
-				<form action="?name=formRemove" method="post" id="removeForm">
-					<input id="removeText" type="text" name="removedSymbol" style="display:none">
+				<form action="?name=formRemove" method="post" id="tableForm">
+					<input id="tableText" type="text" name="removedSymbol" style="display:none">
 					<table class="portfolioTable" cellspacing="0" cellpadding="0">
-				<tr class="stock" id="TSLA"><td>TSLA</td><td>Last price: $819.01</td><td>Watching for: $9999</td><td><button form="removeForm" class="deleteButton" type="submit" onclick="sendSymbol('TSLA')">DELETE</button></td></tr>
-				<tr class="stock" id="AAPL"><td>AAPL</td><td>Last price: $309.97</td><td>Watching for: $9999</td><td><button form="removeForm" class="deleteButton" type="submit" onclick="sendSymbol('AAPL')">DELETE</button></td></tr>
-				<tr class="stock" id="HD"><td>HD</td><td>Last price: $234.2200</td><td>Watching for: $9999</td><td><button form="removeForm" class="deleteButton" type="submit" onclick="sendSymbol('HD')">DELETE</button></td></tr>
-			</table>
+						<tr class="stock" id="TSLA" onmouseover="printSymbol('TSLA')"><td>TSLA</td><td>Last price: $817.6900</td><td>Watching for: $9999</td><td><button form="tableForm" class="deleteButton" type="submit" onclick="sendSymbol('TSLA')">DELETE</button></td></tr>
+						<tr class="stock" id="MSFT" onmouseover="printSymbol('MSFT')"><td>MSFT</td><td>Last price: $184.6800</td><td>Watching for: $9999</td><td><button form="tableForm" class="deleteButton" type="submit" onclick="sendSymbol('MSFT')">DELETE</button></td></tr>
+						<tr class="stock" id="AAPL" onmouseover="printSymbol('AAPL')"><td>AAPL</td><td>Last price: $310.2400</td><td>Watching for: $9999</td><td><button form="tableForm" class="deleteButton" type="submit" onclick="sendSymbol('AAPL')">DELETE</button></td></tr>
+					</table>
 				</form>
-				<script>function sendSymbol(s){ document.getElementById("removeText").value = s;}</script>
+				<script>
+					function sendSymbol(s)
+					{ 
+						document.getElementById("tableText").value = s; 
+					}
+					
+					function printSymbol(s)
+					{
+						console.log(s);
+					}
+				</script>
 			</fieldset>
 		</div>
 		<div class="column">
@@ -61,13 +71,56 @@
 				var canvas = document.getElementById('canvas');
 				var ctx = canvas.getContext('2d');
 
-				var prices = [122.9800, 122.9300, 122.9100 ,122.9900, 122.9500]; //automate this
-				var times = ["15:56", "15:57", "15:58", "15.59", "16:00"]; //automate this too
+				var prices = 
+					[
+						'3059.9900', '3050.0000', '3049.8999', '3065.2200', '3082.1899',
+						'3100.0000', '3125.0000', '3150.0000', '3190.2000', '3191.1484',
+						'3190.0000', '3160.0200', '3174.9900', '3190.0000', '3162.0000',
+						'3172.0000', '3172.2246', '3150.0000', '3157.0000', '3175.1800',
+						'3188.9500', '3168.0000', '3160.0000', '3159.9951', '3168.1499',
+						'3152.0400', '3158.0000', '3151.8501', '3164.0000', '3164.8201',
+						'3158.0000', '3149.5601', '3172.7700', '3174.4399', '3175.0000',
+						'3175.0000', '3175.0000', '3180.5901', '3175.0000', '3189.9800',
+						'3195.0000', '3193.9800', '3178.0200', '3193.5901', '3185.0049',
+						'3185.0049', '3206.2900', '3210.0000', '3210.1499', '3211.0400',
+						'3212.0000', '3194.1111', '3199.8899', '3220.5249', '3179.8201',
+						'3221.0352', '3225.0000', '3228.9900', '3220.0100', '3234.0000',
+						'3230.6399', '3201.3300', '3224.4651', '3224.4751', '3222.9751',
+						'3235.0100', '3234.0938', '3220.0000', '3246.0000', '3245.5000',
+						'3240.0000', '3240.0000', '3240.0000', '3215.0000', '3216.3000',
+						'3170.0200', '3213.0100', '3209.9351', '3200.0000', '3155.0000',
+						'3175.0200', '3180.0000', '3175.1001', '3180.0000', '3192.5000',
+						'3192.5000', '3217.5000', '3220.0000', '3225.9951', '3204.0000',
+						'3212.0000', '3210.0000', '3197.5000', '3197.5000', '3211.1106',
+						'3185.0000', '3200.0000', '3219.0000', '3225.0000', '3230.0000'
+					];
+				var times = 
+					[
+						'10:05', '10:10', '10:15', '10:20', '10:25', '10:40',
+						'10:45', '10:50', '10:55', '11:00', '11:10', '11:20',
+						'11:25', '11:30', '11:40', '11:45', '11:50', '11:55',
+						'12:00', '12:05', '12:10', '12:15', '12:20', '12:25',
+						'12:30', '12:45', '12:55', '13:10', '13:15', '13:20',
+						'13:25', '13:30', '13:35', '13:40', '13:45', '13:50',
+						'14:00', '14:05', '14:10', '14:25', '14:30', '14:35',
+						'14:40', '14:50', '14:55', '15:00', '15:05', '15:20',
+						'15:30', '15:35', '15:40', '15:50', '15:55', '16:00',
+						'09:35', '09:40', '09:45', '09:50', '09:55', '10:00',
+						'10:05', '10:10', '10:15', '10:20', '10:25', '10:30',
+						'10:35', '10:40', '10:45', '10:50', '10:55', '11:00',
+						'11:05', '11:10', '11:15', '11:20', '11:25', '11:30',
+						'11:35', '11:40', '11:45', '11:50', '11:55', '12:00',
+						'12:05', '12:10', '12:15', '12:25', '12:30', '12:35',
+						'12:40', '12:45', '12:50', '12:55', '13:00', '13:05',
+						'13:15', '13:20', '13:30', '13:31'
+					];
 				
-				//Tricky part is calculating what value to add/subtract and calculating yStep... Want the line close to the top
-				var yMin = Math.min.apply(null, prices) - 0.2;
-				var yMax = Math.max.apply(null, prices) + 0.1;
-				var yStep = 0.08;
+				//Tricky part is calculating what value to add/subtract... Want the line close to the top
+				var yMin = Math.min.apply(null, prices);
+				yMin -= yMin * 0.01;
+				var yMax = Math.max.apply(null, prices);
+				yMax += yMax * 0.003;
+				
 				
 				var myChart = new Chart(ctx, {
 				   type: 'line',
@@ -91,6 +144,15 @@
 						legend:
 						{
 							display: false
+						},
+						
+						elements:
+						{
+							point:
+							{
+								radius: 1,
+								hoverRadius: 4
+							}
 						},
 						
 						title:
@@ -131,15 +193,16 @@
 								{
 									min: yMin,
 									max: yMax,
-									stepSize: yStep,
+									autoSkip: true,
+									maxTicksLimit: 15,
 									fontColor: '#bff2ce',
 									fontFamily: 'bahnschrift'
 								},
 								
 								afterTickToLabelConversion: function(scaleInstance)
 								{
+									scaleInstance.ticks[0] = null;
 									scaleInstance.ticks[scaleInstance.ticks.length - 1] = null;
-									//scaleInstance.ticksAsNumbers[scaleInstance.ticksAsNumbers.length - 1] = null;
 								}
 							}]
 						}
