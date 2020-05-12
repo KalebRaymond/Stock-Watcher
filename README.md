@@ -6,7 +6,6 @@ For some reason, on some stocks Alpha Vantage doesn't return current data and in
 
 TODO
  - Code needs to be cleaned up, it's poorly written and hard to read
- - fix NaN error when loading from portfolio.json
  - Clean up script tags in index.ejs. Maybe put them in their own file
  - Change curOpenPrices to curClosePrices
  - Your Portfolio doesn't space columns correctly if stock symbol is less than 4 characters (try hovering over F)
