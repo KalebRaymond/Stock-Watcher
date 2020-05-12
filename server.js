@@ -5,6 +5,9 @@ const nodeMailer = require('nodeMailer');
 const fs = require('fs'); 
 const parser = require('node-html-parser').parse;
 const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
 
 /* Email */
 var transporter = nodeMailer.createTransport({
@@ -33,7 +36,7 @@ async function notify()
 		//Only check stocks that haven't already been in an e-mail in the last hour (or since last e-mail refresh)
 		if(dailyStockAlertFlags[s] === undefined)
 		{
-			await alpha.data.intraday(s).then(data => 
+			await alpha.data.intraday(s, 'compact', 'json', '5min').then(data => 
 			{
 				var openPrice = Number(get_open(data));
 				curOpenPrices[s] = openPrice;
@@ -140,7 +143,7 @@ function render_portfolio(req, res)
 		var openPrice = '$' + curOpenPrices[s];
 		if(curOpenPrices[s] == undefined) openPrice = "Awaiting data...";
 		
-		portfolioText += '\n\t\t\t\t\t\t<tr class="stock" id="' + s + '" onmouseover="printSymbol(\'' + s + '\')"><td>' + s + '</td><td>Last price: ' + openPrice + '</td><td>Watching for: $' + curPortfolio[s] + '</td><td><button form="tableForm" class="deleteButton" type="submit" onclick="sendSymbol(\'' + s + '\')">DELETE</button></td></tr>';
+		portfolioText += '\n\t\t\t\t\t\t<tr class="stock" id="' + s + '" onmouseover="hover_event(\'' + s + '\')"><td>' + s + '</td><td>Last price: ' + openPrice + '</td><td>Watching for: $' + curPortfolio[s] + '</td><td><button form="tableForm" class="deleteButton" type="submit" onclick="sendSymbol(\'' + s + '\')">DELETE</button></td></tr>';
 	}
 	portfolioText += '\n\t\t\t\t\t';
 	body.set_content(portfolioText);
@@ -248,7 +251,9 @@ app.post('/',
 		}
 	});
 
-app.listen(8080, function (req) 
+
+/* Socket IO */
+http.listen(8080, function (req) 
 {
 	console.log('Example app listening on port 8080!')
 	fs.readFile('portfolio.json', function(err, data) 
@@ -264,3 +269,49 @@ app.listen(8080, function (req)
 		}
 	});
 })
+
+io.on('connection', (socket) => {
+	console.log('Socket works');
+	socket.on('clicked', function()
+	{
+		console.log("Test button clicked");
+	});
+	
+	socket.on('hover', (symbol) =>
+	{
+		console.log('Hovering over ' + symbol);
+		//Ok ok ok. Get arrays in this function right here. Emit them back to index.ejs and call draw_graph()
+		alpha.data.intraday(symbol, 'compact', 'json', '5min').then(data =>
+		{
+			var timesStack = [];
+			var pricesStack = [];
+
+			for(var i in data['Time Series (5min)'])
+			{
+				timesStack.push( i.substring(11, 16) );
+				pricesStack.push( data['Time Series (5min)'][i]['4. close'] );
+			}
+
+			var timesArr = [];
+			var pricesArr = [];
+			//The data read from the object needs to be in reverse order for the graph in the html file to be in chronological order.
+			//How I wish you could just read a JS object backwards...
+			while(timesStack.length != 0)
+			{
+				timesArr.push( timesStack.pop() );
+				pricesArr.push( pricesStack.pop() );
+			}
+			
+			var draw_params = 
+			{
+				symbol: symbol,
+				times: timesArr,
+				prices: pricesArr,
+			};
+			
+			io.emit('draw', draw_params);
+		});
+	});
+});
+
+
