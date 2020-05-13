@@ -29,9 +29,14 @@ fieldset.io
 	z-index: 0;
 }
 
-div.ioContainer div
+div#addDiv, div#removeDiv
 {
-	display: inline-block;
+	width: 204px;
+}
+
+div#export
+{
+	width: 180px;
 }
 
 div.ioDiv p
@@ -120,9 +125,28 @@ td
 {
 	padding-top: 2px;
 	padding-bottom: 2px;
-	min-width: 45px;
 }
 
+td#symbol
+{
+	width: 50px;
+}
+
+td#close
+{
+	width: 110px;
+}
+
+td#watch
+{
+	width: 100px;
+}
+
+td#delete
+{
+	width: 75px;
+	text-align: center;
+}
 
 tr:hover
 {
