@@ -18,7 +18,7 @@ const user =
 };
 
 /* Node Mailer */
-var transporter = nodeMailer.createTransport({
+const transporter = nodeMailer.createTransport({
 	service: 'gmail',
 	auth: 
 	{
@@ -166,9 +166,9 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs')
 
-app.get('/', function (req, res)
+app.get('/', async function (req, res)
 {
-	notify(); //Retrieving stock data is slow, if you await notify the page wont load for a few seconds
+	await notify();
 	render_portfolio(req, res);
 })
 
@@ -192,6 +192,7 @@ app.post('/',
 				alpha.data.intraday(symbol, 'compact', 'json', '5min').then(data => 
 				{
 					console.log(data);
+					
 					fs.writeFileSync('time_series_data.json', JSON.stringify(data)); //Make this async?
 					
 					var closePrice = get_close_price(data);
@@ -289,7 +290,7 @@ io.on('connection', (socket) => {
 	socket.on('hover', (symbol) =>
 	{
 		console.log('Hovering over ' + symbol);
-		/*alpha.data.intraday(symbol, 'compact', 'json', '5min').then(data =>
+		alpha.data.intraday(symbol, 'compact', 'json', '5min').then(data =>
 		{
 			var timesStack = [];
 			var pricesStack = [];
@@ -318,8 +319,9 @@ io.on('connection', (socket) => {
 			};
 			
 			io.emit('draw', draw_params);
-		});*/
+		});
 	});
 });
+
 
 
