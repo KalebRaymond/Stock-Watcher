@@ -209,7 +209,6 @@ app.post('/',
 							subject: '' + symbol + ' alert!' ,
 							text: 'The current price for ' + symbol + ' is $' + openPrice,
 						};
-
 						transporter.sendMail(mailOptions, function(error, info)
 						{
 							if (error) {
@@ -223,7 +222,7 @@ app.post('/',
 				{
 					//Error occurs if user enters a stock symbol that the API doesn't recognize
 					//but also if the API's call limit is exceeded (5/min, 500/day)
-					console.log('Alpha Vantage error: stock ' + symbol + ' not found.');
+					console.log('Alpha Vantage error: stock ' + symbol + ' not found or call limit exceeded.');
 					render_portfolio(req, res);
 				});
 			}
@@ -282,7 +281,11 @@ http.listen(8080, function (req)
 /*
 /	Socket io handles 'hover' event when user hovers over a table row in
 /	the portfolio. io emits a 'draw' signal back telling the client to render
-/	a line chart for the corresponding stock.
+/	a line chart for the corresponding stock. 
+/	Drawing the graph relies on a call to the alpha vantage API, which means if 
+/	the call limit is exceeded nothing will be drawn. I tried circumventing this 
+/	call by storing the stock data in a JSON file but all the added file system
+/	overhead made just about everything else really slow (especially loading the page).
 */
 io.on('connection', (socket) => {
 	//console.log('Socket works');
@@ -322,6 +325,3 @@ io.on('connection', (socket) => {
 		});
 	});
 });
-
-
-
