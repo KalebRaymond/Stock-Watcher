@@ -1,13 +1,13 @@
 {
   "name": "stockwatcher",
   "version": "1.0.0",
-  "description": "DESC",
+  "description": "Watches your stocks and tells you when to sell.",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "author": "",
+  "author": "Kaleb Raymond",
   "license": "ISC",
   "dependencies": {
     "alphavantage": "^2.0.1",
