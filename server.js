@@ -87,7 +87,7 @@ async function notify()
 	}
 	else
 	{
-		console.log("No new stock price alerts.")
+		console.log('No new stock price alerts.')
 	}
 }
 
@@ -102,8 +102,8 @@ function clear_alert_flags()
 	user.dailyStockAlertFlags = {};
 }
 
-//setInterval(notify, 5 * 60 * 1000);
-//setInterval(clear_alert_flags, 60 * 60 * 1000);
+setInterval(notify, 5 * 60 * 1000);
+setInterval(clear_alert_flags, 60 * 60 * 1000);
 
 /*
 /	Returns the most recent close price for a stock from a given alpha vantage 
@@ -137,7 +137,7 @@ function remove_from_portfolio(stock)
 */
 function render_portfolio(req, res)
 {
-	var html = fs.readFileSync('views/index.ejs');
+	var html = fs.readFileSync('public/views/index.ejs');
 	const root = parser(html, {script: true});
 	const body = root.querySelector('table');
 	
@@ -145,7 +145,7 @@ function render_portfolio(req, res)
 	for(var s in user.curPortfolio)
 	{
 		var openPrice = '$' + user.curClosePrices[s];
-		if(user.curClosePrices[s] == undefined) openPrice = "Awaiting data...";
+		if(user.curClosePrices[s] == undefined) openPrice = 'Awaiting data...';
 		
 		portfolioText += '\n\t\t\t\t\t\t\t<tr class="stock" id="' + s + '" onmouseover="hover_event(\'' + s + '\')">'
 			+ '<td id="symbol">' + s + '</td>'
@@ -156,7 +156,7 @@ function render_portfolio(req, res)
 	portfolioText += '\n\t\t\t\t\t\t';
 	body.set_content(portfolioText);
 	
-	fs.writeFileSync('views/index.ejs', root.toString());
+	fs.writeFileSync('public/views/index.ejs', root.toString());
 	res.render('index', {});
 }
 
@@ -164,7 +164,8 @@ function render_portfolio(req, res)
 /* Express middleware */
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.set('view engine', 'ejs')
+app.set('view engine', 'ejs');
+app.set('views','public/views');
 
 app.get('/', async function (req, res)
 {
@@ -191,9 +192,7 @@ app.post('/',
 			{
 				alpha.data.intraday(symbol, 'compact', 'json', '5min').then(data => 
 				{
-					console.log(data);
-					
-					fs.writeFileSync('time_series_data.json', JSON.stringify(data)); //Make this async?
+					fs.writeFileSync('lib/time_series_data.json', JSON.stringify(data)); //Make this async?
 					
 					var closePrice = get_close_price(data);
 					add_to_portfolio(symbol, flDesiredPrice, closePrice);
@@ -237,7 +236,6 @@ app.post('/',
 	{
 		if (req.query.name === 'formRemove')
 		{
-			//console.log(req.body);
 			remove_from_portfolio(req.body.removedSymbol.toUpperCase());
 			render_portfolio(req, res);
 		}
@@ -252,7 +250,8 @@ app.post('/',
 		if (req.query.name === 'formExport')
 		{
 			var portfolioJSON = JSON.stringify(user.curPortfolio);
-			fs.writeFile('portfolio.json', portfolioJSON, function (err){if (err) throw err;} );
+			fs.writeFile('lib/portfolio.json', portfolioJSON, function (err){if (err) throw err;} );
+			render_portfolio(req, res);
 		}
 		else
 		{
@@ -264,7 +263,7 @@ app.post('/',
 http.listen(8080, function (req) 
 {
 	console.log('Stock Watcher listening on port 8080')
-	fs.readFile('portfolio.json', function(err, data) 
+	fs.readFile('lib/portfolio.json', function(err, data) 
 	{
 		if(err)
 		{
@@ -288,11 +287,8 @@ http.listen(8080, function (req)
 /	overhead made just about everything else really slow (especially loading the page).
 */
 io.on('connection', (socket) => {
-	//console.log('Socket works');
-	
 	socket.on('hover', (symbol) =>
 	{
-		console.log('Hovering over ' + symbol);
 		alpha.data.intraday(symbol, 'compact', 'json', '5min').then(data =>
 		{
 			var timesStack = [];
