@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Stock Watcher</title>
+		<link rel="stylesheet" type="text/css" href="/css/style.css">
+	</head>
+	<body>
+		<div>
+			<div class="colummn">
+				<div class="ioContainer">
+					<div class="ioDiv" id="addDiv">
+					  <p id="add">Add</p>
+					  <fieldset class="io">
+						<form action="?name=formAdd" method="post">
+						  <input name="addedSymbol" type="text" class="inputBox" placeholder="Symbol" required>
+						  <input name="desiredPrice" type="text" class="inputBox" placeholder="Price" required>
+						  <input type="submit" class="button" value="Add">
+						</form>
+					  </fieldset>
+					</div>
+					<div class="ioDiv" id="removeDiv">
+					  <p id="remove">Remove</p>  
+					  <fieldset class="io">
+						<form action="?name=formRemove" method="post">
+						  <input name="removedSymbol" type="text" class="inputBox" placeholder="Symbol" required>
+						  <input type="submit" class="button" value="Remove">
+						</form>
+					  </fieldset>
+					</div>
+					<div class="ioDiv" id="exportDiv">
+					  <p id="export">Export</p>
+					  <fieldset class="io">
+						<form action="?name=formExport" method="post">
+						  <input type="submit" class="button" value="Export">
+						</form>
+					  </fieldset>
+					</div>
+				</div>
+				<fieldset class="portfolio"> 
+					<p>Your portfolio:</p>
+					<form action="?name=formRemove" method="post" id="tableForm">
+						<input id="tableText" type="text" name="removedSymbol" style="display:none">
+						<table class="portfolioTable" cellspacing="0" cellpadding="0">
+							<tr class="stock" id="TSLA" onmouseover="hover_event('TSLA')"><td id="symbol">TSLA</td><td id="close">Last price: $803.08</td><td id="watch">Watching for: $9999</td><td id="delete"><button form="tableForm" class="deleteButton" type="submit" onclick="sendSymbol('TSLA')">DELETE</button></td></tr>
+							<tr class="stock" id="F" onmouseover="hover_event('F')"><td id="symbol">F</td><td id="close">Last price: $4.9</td><td id="watch">Watching for: $9999</td><td id="delete"><button form="tableForm" class="deleteButton" type="submit" onclick="sendSymbol('F')">DELETE</button></td></tr>
+							<tr class="stock" id="MSFT" onmouseover="hover_event('MSFT')"><td id="symbol">MSFT</td><td id="close">Last price: $180.47</td><td id="watch">Watching for: $9999</td><td id="delete"><button form="tableForm" class="deleteButton" type="submit" onclick="sendSymbol('MSFT')">DELETE</button></td></tr>
+						</table>
+					</form>
+				</fieldset>
+			</div>
+			<div class="column">
+				<div class="canvasDiv">
+					<canvas id="canvas" width="400" height="400">
+					</canvas>
+				</div>
+			</div>
+		</div>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+		<script>
+			function sendSymbol(s)
+			{ 
+				document.getElementById("tableText").value = s; 
+			}
+	
+			var socket = io();
+			
+			socket.on('draw', (draw_obj) =>
+			{
+				//console.log('Received draw signal. ' + arr);
+				draw_graph( draw_obj['symbol'], draw_obj['times'], draw_obj['prices'] );
+			});
+			
+			function hover_event(s)
+			{
+				socket.emit('hover', s);
+			}
+			
+			function draw_graph(symbol, times, prices)
+			{					
+				var canvas = document.getElementById('canvas');
+				var ctx = canvas.getContext('2d');
+
+				//Tricky part is calculating what value to add/subtract... Want the line close to the top
+				var yMin = Math.min.apply(null, prices);
+				yMin -= yMin * 0.01;
+				var yMax = Math.max.apply(null, prices);
+				yMax += yMax * 0.003;
+				
+				
+				var myChart = new Chart(ctx, {
+				   type: 'line',
+				   data:
+				   {
+					  labels: times,
+					  datasets: [
+					  {
+						display: false,
+						label: symbol,
+						data: prices,
+						borderColor: '#bff2ce',
+						pointBackgroundColor: '#bff2ce',
+						fill: false
+					  }]
+				   },
+				   options: 
+				   {
+						responsive: false,
+						
+						legend:
+						{
+							display: false
+						},
+						
+						elements:
+						{
+							point:
+							{
+								radius: 1,
+								hoverRadius: 4
+							}
+						},
+						
+						title:
+						{
+							display: true,
+							text: symbol,
+							fontColor: '#bff2ce',
+							fontFamily: 'bahnschrift',
+							fontSize: 16
+						},
+						
+						scales:
+						{
+							xAxes: [
+							{
+								gridLines: 
+								{
+									display: false,
+									color: '#bff2ce'
+								},
+								
+								ticks:
+								{
+									fontColor: '#bff2ce',
+									fontFamily: 'bahnschrift'
+								}
+							}],
+								
+							yAxes: [
+							{
+								gridLines: 
+								{
+									display: false,
+									color: '#bff2ce'
+								},
+								
+								ticks:
+								{
+									min: yMin,
+									max: yMax,
+									autoSkip: true,
+									maxTicksLimit: 15,
+									fontColor: '#bff2ce',
+									fontFamily: 'bahnschrift'
+								},
+								
+								afterTickToLabelConversion: function(scaleInstance)
+								{
+									scaleInstance.ticks[0] = null;
+									scaleInstance.ticks[scaleInstance.ticks.length - 1] = null;
+								}
+							}]
+						}
+				   }
+				});
+			}
+		</script>
+	</body>
+</html>
