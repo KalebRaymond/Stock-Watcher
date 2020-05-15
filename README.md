@@ -17,4 +17,4 @@ Download this repo. Run npm install in the project root to install the necessary
  - AV_KEY - your alpha vantage API key  
 
 The file should look like this:  
-![env variables]()
+![env variables](https://i.imgur.com/6l0sH0r.png)
