@@ -5,6 +5,17 @@ Stock Watcher uses real time stock data to alert users via e-mail when a stock i
 ![adding](https://i.imgur.com/PWra2pZ.gif)  
 ![hovering](https://i.imgur.com/scS5Lx0.gif)  
 
+```
+<p align="center">
+  <img src="https://i.imgur.com/PWra2pZ.gif">
+</p>
+```
+```
+<p align="center">
+  <img width="460" height="300" src="https://i.imgur.com/scS5Lx0.gif">
+</p>
+```
+
 For some reason, on some stocks, Alpha Vantage doesn't return current data and instead returns data from the previous day. Alpha Vantage apparently doesn't update NASDAQ stocks in real time, but for NYSE stocks it does (TSLA doesn't work but IBM does).
 
 ## Installation
@@ -16,4 +27,9 @@ Download this repo. Run npm install in the project root to install the necessary
  - AV_KEY - your alpha vantage API key  
 
 The file should look like this:  
-![env variables](https://i.imgur.com/6l0sH0r.png)
+![env variables]()
+```
+<p align="center">
+  <img width="460" height="300" src="https://i.imgur.com/6l0sH0r.png">
+</p>
+```
