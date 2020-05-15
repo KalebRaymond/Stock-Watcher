@@ -11,4 +11,6 @@ Download this repo. Run npm install in the project root to install the necessary
  - FROM_EMAIL - the email address you will use to send updates from  
  - NODEMAIL_PW - the password to FROM_EMAIL  
  - AV_KEY - your alpha vantage API key  
-The file should look like this:
+
+The file should look like this:  
+![env variables](https://imgur.com/a/Fw77lSf)
