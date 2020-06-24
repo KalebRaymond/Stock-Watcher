@@ -93,8 +93,8 @@ async function notify()
 /*
 /	Resets all values in user.dailyStockAlertFlags to false. This allows stocks that
 /	have already been in an email since the last refresh to be in another email.
-/	If a stock hits the desired price and stays above it, then the user would get
-/	an email about that stock every five minutes. 
+/	Otherwise, if a stock hits the desired price and stays above it, then the user would 
+/	get an email about that stock every five minutes. 
 */
 function clear_alert_flags()
 {
