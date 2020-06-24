@@ -21,7 +21,7 @@ const transporter = nodeMailer.createTransport({
 	service: 'gmail',
 	auth: 
 	{
-		user: 'StockWatcherNotification@gmail.com',
+		user: process.env.FROM_EMAIL,
 		pass: process.env.NODEMAIL_PW
 	}
 });
@@ -150,7 +150,7 @@ function render_portfolio(req, res)
 			+ '<td id="symbol">' + s + '</td>'
 			+ '<td id="close">Last price: ' + openPrice + '</td>'
 			+ '<td id="watch">Watching for: $' + user.curPortfolio[s] + '</td>'
-			+ '<td id="delete"><button form="tableForm" class="deleteButton" type="submit" onclick="sendSymbol(\'' + s + '\')">DELETE</button></td></tr>';
+			+ '<td id="delete"><button form="tableForm" class="deleteButton" type="submit" onclick="send_symbol(\'' + s + '\')">DELETE</button></td></tr>';
 	}
 	portfolioText += '\n\t\t\t\t\t\t';
 	body.set_content(portfolioText);
