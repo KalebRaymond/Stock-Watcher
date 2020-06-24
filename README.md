@@ -1,6 +1,6 @@
 # Stock-Watcher
 
-Stock Watcher uses real time stock data to alert users via e-mail when a stock in their portfolio reaches a desired price. Stock data provided by [Alpha Vantage](www.alphavantage.co) and makes use of [zackurben's wrapper](https://github.com/zackurben/alphavantage).  
+Stock Watcher uses real time stock data to alert users via e-mail when a stock in their portfolio reaches a desired price. Stock data provided by [Alpha Vantage](www.alphavantage.co)* and makes use of [zackurben's wrapper](https://github.com/zackurben/alphavantage).
 
 ![adding](https://i.imgur.com/PWra2pZ.gif)  
   
@@ -18,3 +18,7 @@ Download this repo. Run npm install in the project root to install the necessary
 
 The file should look like this:  
 ![env variables](https://i.imgur.com/6l0sH0r.png)
+
+## Footnote
+\*As of 6/23/2020, Alpha Vantage has been relaunched under the name "marketstack." I have not tested this repo since then, so it probably doesn't work anymore.
+
