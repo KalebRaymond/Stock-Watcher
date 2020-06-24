@@ -42,9 +42,6 @@
 					<form action="?name=formRemove" method="post" id="tableForm">
 						<input id="tableText" type="text" name="removedSymbol" style="display:none">
 						<table class="portfolioTable" cellspacing="0" cellpadding="0">
-							<tr class="stock" id="TSLA" onmouseover="hover_event('TSLA')"><td id="symbol">TSLA</td><td id="close">Last price: $803.08</td><td id="watch">Watching for: $9999</td><td id="delete"><button form="tableForm" class="deleteButton" type="submit" onclick="sendSymbol('TSLA')">DELETE</button></td></tr>
-							<tr class="stock" id="F" onmouseover="hover_event('F')"><td id="symbol">F</td><td id="close">Last price: $4.9</td><td id="watch">Watching for: $9999</td><td id="delete"><button form="tableForm" class="deleteButton" type="submit" onclick="sendSymbol('F')">DELETE</button></td></tr>
-							<tr class="stock" id="MSFT" onmouseover="hover_event('MSFT')"><td id="symbol">MSFT</td><td id="close">Last price: $180.47</td><td id="watch">Watching for: $9999</td><td id="delete"><button form="tableForm" class="deleteButton" type="submit" onclick="sendSymbol('MSFT')">DELETE</button></td></tr>
 						</table>
 					</form>
 				</fieldset>
@@ -59,7 +56,7 @@
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
 		<script>
-			function sendSymbol(s)
+			function send_symbol(s)
 			{ 
 				document.getElementById("tableText").value = s; 
 			}
